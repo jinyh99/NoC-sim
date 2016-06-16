@@ -1,0 +1,26 @@
+#!/bin/csh
+
+set EXE = ~/noc_cpp/bin/noc
+set WKLD_TYPE = "TRAFFIC_MATRIX"
+set K = 4
+set core_num
+@ core_num = ${K} * ${K};
+
+${EXE} \
+        -wkld:type		${WKLD_TYPE} \
+        -wkld:flits_per_pkt	8 \
+        -net:topology		"mesh" \
+        -net:core_num		${core_num} \
+	-net:routing		"xy" \
+        -net:mesh:rows		${K} \
+	-net:mesh:cols		${K} \
+        -router:inbuf_depth	6 \
+        -router:vc		4 \
+        -router:power_model     "orion_call" \
+        -link:width		64 \
+        -sim:warm_cycle		10000 \
+        -sim:end_cycle		50000 \
+        -sim:progress		Y \
+	-sim:progress_interval	2000 \
+        -sim:outfile		"mesh${core_num}_matrix_load.out" \
+

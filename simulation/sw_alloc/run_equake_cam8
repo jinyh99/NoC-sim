@@ -1,0 +1,39 @@
+#!/bin/csh
+
+set TRACE_BENCHMARK = "equake"
+set TRACE_DIR = "/home/yuho/noc_cpp/net_trace/tiled_16p/specomp"
+#set SA_TYPES = ("maximal" "v1_rr_p1_fcfs" "v1_rr_p1_rr" "v1_fcfs_p1_fcfs" "v1_fcfs_p1_rr")
+set SA_TYPES = ("rr" "lrs")
+set EXE = ../noc
+set OUTDIR = "."
+
+foreach s ($SA_TYPES)
+  ${EXE} \
+    -traffic		TILED_CMP_VALUE \
+    -trace_dir 		${TRACE_DIR} \
+    -trace_benchmark	${TRACE_BENCHMARK} \
+#    -trace_skip_kcycles 540 \
+    -warm_cycle         0 \
+    -end_cycle          10000000 \
+    -topology		mesh \
+    -routing		XY \
+    -sa_type            ${s} \
+    -spec_sa            N \
+    -bufsz		4 \
+    -vc_num		4 \
+    -link_width		64 \
+    -outfile		"${OUTDIR}/${TRACE_BENCHMARK}-tiled_16p-cam8-${s}.out" \
+    -perf_pfile		"${OUTDIR}/${TRACE_BENCHMARK}-tiled_16p-cam8-${s}.perf.pf" \
+    -power_pfile	"${OUTDIR}/${TRACE_BENCHMARK}-tiled_16p-cam8-${s}.power.pf" \
+    -profile_interval	100 \
+    -progress Y \
+    -progress_interval	100000 \
+    -cam_data_manage    	per_router \
+    -cam_data_enable    	Y \
+    -cam_data_encode_latency    2 \
+    -cam_data_decode_latency    1 \
+    -cam_data_encode_num_sets  	8 \
+    -cam_data_decode_num_sets  	8 \
+    -cam_data_encode_block_bytes       64
+    -cam_data_decode_block_bytes       64
+end

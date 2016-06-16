@@ -1,0 +1,37 @@
+#!/bin/csh
+
+#set LOAD = (0.02 0.04 0.06 0.08 0.10 0.12 0.14 0.16)
+set LOAD = (0.2)
+set EXE = ~/noc_cpp/bin/noc
+set WKLD_TYPE = "SYNTH"
+#set WKLD_SYNTH_SPATIAL_SETS = ("UR" "BC" "TP")
+set WKLD_SYNTH_SPATIAL_SETS = ("UR")
+set TOPOLOGY = "mesh"
+set K = 8
+set CORE_NUM
+@ CORE_NUM = ${K} * ${K};
+
+foreach spatial ($WKLD_SYNTH_SPATIAL_SETS)
+  foreach i ($LOAD)
+    set OUT_FILE = "${TOPOLOGY}${CORE_NUM}_${spatial}_load${i}.out"
+    ${EXE} \
+        -wkld:type		${WKLD_TYPE} \
+        -wkld:synth:spatial	${spatial} \
+        -wkld:synth:load	${i} \
+        -wkld:synth:flits_per_pkt	5 \
+        -wkld:synth:bimodal	"Y" \
+        -net:topology		${TOPOLOGY} \
+        -net:core_num		${CORE_NUM} \
+	-net:routing		"xy" \
+        -router:inbuf_depth	4 \
+        -router:vc		2 \
+        -router:power_model     "orion_call" \
+        -link:width		64 \
+        -sim:warm_cycle		2000 \
+        -sim:end_cycle		10000 \
+        -sim:progress		Y \
+	-sim:progress_interval	2000 \
+        -sim:outfile		${OUT_FILE} \
+
+  end
+end

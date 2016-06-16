@@ -1,0 +1,9 @@
+################################################################################
+##### README file for NoC-sim                                              #####
+##### Yuho Jin                                                             #####
+##### 2016                                                                 #####
+##### New Mexico State University                                          #####
+################################################################################
+
+NoC-sim is a Network-on-Chip (NoC) simulator. To compile NoC-sim, CSIM library is
+needed. CSIM is proprietary software and is not included in the respository.

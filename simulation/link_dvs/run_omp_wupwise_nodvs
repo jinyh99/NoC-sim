@@ -1,0 +1,27 @@
+#!/bin/csh
+
+set EXE = ../noc
+set TRACE_BENCHMARK = "wupwise"
+set TRACE_DIR = "/home/simics/gems2005/omp-take3"
+set LINK_DVS_RATE_FILE_DIR = "/home/yuho/OMP_trace/bin/zInterval-1M"
+set LINK_DVS_INTERVAL = 1000000.0
+
+${EXE} \
+    -traffic		OMP \
+    -trace_dir 		${TRACE_DIR} \
+    -trace_benchmark	${TRACE_BENCHMARK} \
+    -trace_skip_mcycles	20 \
+    -warm_cycle 	20000000.0 \
+    -end_cycle  	25000000.0 \
+    -topology		mesh \
+    -routing		XY \
+    -bufsz		16 \
+    -vc_num		4 \
+    -link_width		128 \
+    -outfile		${TRACE_BENCHMARK}-mesh-nodvs.out \
+    -perf_pfile		${TRACE_BENCHMARK}-mesh-nodvs.perf.pf \
+    -power_pfile	${TRACE_BENCHMARK}-mesh-nodvs.power.pf \
+    -router_extra_pipeline_depth 11 \
+    -link_dvs_method	no \
+    -progress		Y \
+    -progress_interval	1000000

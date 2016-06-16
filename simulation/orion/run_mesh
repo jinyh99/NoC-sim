@@ -1,0 +1,19 @@
+#!/bin/csh
+#set LOAD = (0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
+set LOAD = (0.3)
+
+foreach i ($LOAD)
+    ../noc -load ${i} \
+        -topology mesh \
+        -mesh:rows 4 -mesh:cols 4 \
+        -bufsz 16 \
+        -vc_num 4 \
+        -link_width 256 \
+        -traffic ur \
+        -ss_traffic N \
+        -warm_cycle 2000.0 \
+        -end_cycle  6000.0 \
+        -progress Y \
+	-progress_interval 200 \
+        -outfile mesh_4x4_ur_load${i}-100nm-1.2V-2GHz.out
+end

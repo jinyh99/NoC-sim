@@ -1,0 +1,47 @@
+#!/bin/csh
+#set LOAD = (0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
+set LOAD = (0.01)
+#set WKLDS = ("UR" "TP" "BC")
+set WKLDS = ("UR")
+set EXE = ~/noc_cpp/bin/noc
+set K = 8
+set ROUTER_POWER_MODEL = "stats"
+#set LINK_POWER_MODEL = "orion"
+set LINK_POWER_MODEL = "opt_repeated"
+#set LINK_POWER_MODEL = "opt_repeated_value"
+set LINK_LENGTH_MM
+@ LINK_LENGTH_MM = 20 / ${K};		# chip edge is assumed to be 20mm.
+
+set core_num
+@ core_num = ${K} * ${K};
+
+echo "link_length = "${LINK_LENGTH_MM}"mm";
+
+foreach wkld ($WKLDS)
+  foreach i ($LOAD)
+    ${EXE} \
+        -wkld:type		${wkld} \
+        -wkld:load		${i} \
+        -wkld:flits_per_pkt	6 \
+        -net:topology		"mesh" \
+        -net:core_num		${core_num} \
+	-net:routing		"XY" \
+        -net:mesh:rows		${K} \
+	-net:mesh:cols		${K} \
+        -router:inbuf_depth	8 \
+        -router:vc		2 \
+	-router:power_model	${ROUTER_POWER_MODEL} \
+        -link:width		64 \
+	-link:length		${LINK_LENGTH_MM} \
+	-link:power_model	${LINK_POWER_MODEL} \
+        -sim:warm_cycle		5000 \
+        -sim:end_cycle		100000 \
+        -sim:progress		Y \
+	-sim:progress_interval	1000 \
+        -sim:outfile		"mesh${core_num}_${wkld}_load${i}_rp=${ROUTER_POWER_MODEL}_lp=${LINK_POWER_MODEL}.out" \
+        -sim:perf_pfile		"mesh${core_num}_${wkld}_load${i}_rp=${ROUTER_POWER_MODEL}_lp=${LINK_POWER_MODEL}.perf" \
+        -sim:power_pfile	"mesh${core_num}_${wkld}_load${i}_rp=${ROUTER_POWER_MODEL}_lp=${LINK_POWER_MODEL}.power" \
+        -sim:profile_interval	1000 \
+
+  end
+end

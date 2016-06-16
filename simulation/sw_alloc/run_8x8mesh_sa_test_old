@@ -1,0 +1,26 @@
+#!/bin/csh
+#set LOAD = (0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
+set LOAD = (0.3)
+set SA_TYPES = ("V1_RR_P1_RR")
+set EXE = ../noc_old
+
+foreach i ($LOAD)
+  foreach s ($SA_TYPES)
+    $EXE -load ${i} \
+         -topology mesh \
+         -mesh:rows 8 -mesh:cols 8 \
+         -core_num 64 \
+         -bufsz 8 \
+         -vc_num 4 \
+         -link_width 128 \
+         -spec_sa N \
+         -traffic ur \
+         -ss_traffic N \
+         -warm_cycle 10000 \
+         -end_cycle  60000 \
+         -progress Y \
+         -progress_interval 2000 \
+         -outfile "mesh_8x8_ur_load${i}-sa_${s}-old.out" \
+         -sa_type ${s}
+  end
+end

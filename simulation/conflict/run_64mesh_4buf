@@ -1,0 +1,32 @@
+#!/bin/csh
+set EXE = "../noc"
+
+# workload
+set LOAD = (0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5)
+set TRAFFIC_PATTERN = ("ur", "nn", "bc", "tp", "tor")
+set FLITS_PER_PKT = 6
+
+# network configuration
+set FLIT_BUFFER_DEPTH = 4
+set VC_NUM = 2
+
+# output file
+set OUT_DIR = "out-vc"${VC_NUM}"-buf"${FLIT_BUFFER_DEPTH}
+
+foreach load ($LOAD)
+  foreach trp ($TRAFFIC_PATTERN)
+	$EXE \
+        -load		${load} \
+        -traffic	${trp} \
+	-flits_per_pkt	${FLITS_PER_PKT} \
+        -topology	mesh \
+	-routing	XY \
+	-core_num	64 \
+        -bufsz		${FLIT_BUFFER_DEPTH} \
+        -vc_num		${VC_NUM} \
+        -link_width	128 \
+        -warm_cycle	10000.0 \
+        -end_cycle	30000.0 \
+        -progress	Y \
+        -outfile	$OUT_DIR/mesh64_${trp}_load${load}.out
+end

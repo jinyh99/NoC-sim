@@ -1,0 +1,30 @@
+#!/bin/csh
+#set LOAD = (0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
+set LOAD = (0.3)
+set EXE = ~/noc_cpp/bin/noc
+set K = 8
+set core_num
+
+@ core_num = ${K} * ${K};
+
+foreach i ($LOAD)
+  ${EXE} \
+        -wkld:type		"UR" \
+        -wkld:load		${i} \
+        -wkld:flits_per_pkt	4 \
+        -net:topology		"mesh" \
+        -net:core_num		${core_num} \
+	-net:routing		"XY" \
+        -net:mesh:rows		${K} \
+	-net:mesh:cols		${K} \
+        -router:inbuf_depth	16 \
+        -router:vc		4 \
+        -router:extra_pipe_depth	11 \
+        -link:width		128 \
+        -sim:warm_cycle		10000 \
+        -sim:end_cycle		20000 \
+        -sim:progress		Y \
+	-sim:progress_interval	2000 \
+        -sim:outfile		"mesh${core_num}_ur_load${i}_11pipe.out" \
+
+end
